@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Recipe Results</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #a8e6cf, #dcedc1, #80deea);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .accordion-item {
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      margin-bottom: 1rem;
+    }
+    .accordion-button {
+      background-color: #009688;
+      color: #fff;
+      font-weight: bold;
+    }
+    .accordion-button.collapsed {
+      background-color: #00796b;
+      color: #fff;
+    }
+    .thumbnail {
+      max-width: 100px;
+      max-height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-right: 1rem;
+    }
+    .btn-custom {
+      background-color: #00796b;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+    }
+    .btn-custom:hover {
+      background-color: #004d40;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <h1 class="mb-4 text-center">Recipe Results</h1>
+    {% if recipes %}
+      <div class="accordion" id="recipeAccordion">
+        {% for recipe in recipes %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ loop.index }}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="thumbnail" onerror="this.onerror=null; this.src='https://via.placeholder.com/100?text=No+Image';">
+                {{ recipe.title }}
+              </button>
+            </h2>
+            <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="heading{{ loop.index }}" data-bs-parent="#recipeAccordion">
+              <div class="accordion-body">
+                <h6>Nutrition:</h6>
+                <ul>
+                  {% for key, value in recipe.nutrition.items() %}
+                    {% if value %}<li>{{ key }}: {{ value }}</li>{% endif %}
+                  {% endfor %}
+                </ul>
+                <h6>Ingredients:</h6>
+                <ul>
+                  {% for ing in recipe.ingredients %}
+                    <li>{{ ing }}</li>
+                  {% endfor %}
+                </ul>
+                <h6>Instructions:</h6>
+                <ul>
+                  {% for step in recipe.instructions %}
+                    <li>{{ step }}.</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center">No recipes found.</p>
+    {% endif %}
+    <div class="text-center mt-4">
+      <a href="/" class="btn btn-custom">Back</a>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
