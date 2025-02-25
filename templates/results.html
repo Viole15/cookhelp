@@ -1,92 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Recipe Results</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-  <style>
-    body {
-      background: linear-gradient(135deg, #a8e6cf, #dcedc1, #80deea);
-      min-height: 100vh;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    .accordion-item {
-      border-radius: 15px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-      margin-bottom: 1rem;
-    }
-    .accordion-button {
-      background-color: #009688;
-      color: #fff;
-      font-weight: bold;
-    }
-    .accordion-button.collapsed {
-      background-color: #00796b;
-      color: #fff;
-    }
-    .thumbnail {
-      max-width: 100px;
-      max-height: 100px;
-      object-fit: cover;
-      border-radius: 10px;
-      margin-right: 1rem;
-    }
-    .btn-custom {
-      background-color: #00796b;
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-    }
-    .btn-custom:hover {
-      background-color: #004d40;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Recipe Results</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #b9fbc0 100%);
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #1a3c34;
+            font-size: 2.5em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .recipe-box {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 15px auto;
+            max-width: 600px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .recipe-box:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            transform: scale(1.02);
+        }
+        .recipe-box summary {
+            padding: 15px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            color: #fff;
+            font-size: 1.4em;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .recipe-box summary::-webkit-details-marker {
+            display: none;
+        }
+        .recipe-box summary::after {
+            content: '▼';
+            font-size: 0.8em;
+            transition: transform 0.3s;
+            margin-left: auto;
+        }
+        .recipe-box[open] summary::after {
+            transform: rotate(180deg);
+        }
+        .recipe-box img.thumbnail {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .recipe-info {
+            color: #fff;
+            font-size: 0.9em;
+            font-style: italic;
+            flex-grow: 1;
+        }
+        .recipe-details {
+            padding: 20px;
+            background: #f9f9f9;
+            color: #2c3e50;
+        }
+        .recipe-details img.full-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .recipe-details h3 {
+            color: #3498db;
+            font-size: 1.3em;
+            margin-top: 20px;
+            border-bottom: 2px solid #2ecc71;
+            padding-bottom: 5px;
+        }
+        .recipe-details ul, .recipe-details ol {
+            padding-left: 20px;
+        }
+        .recipe-details li {
+            margin: 8px 0;
+        }
+        .nutrition-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #ecf0f1;
+            border-radius: 5px;
+        }
+        .nutrition-table th, .nutrition-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .nutrition-table th {
+            background: #2ecc71;
+            color: #fff;
+        }
+        .nutrition-table tr:last-child td {
+            border-bottom: none;
+        }
+        .error-message {
+            text-align: center;
+            color: #e74c3c;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
-  <div class="container py-5">
-    <h1 class="mb-4 text-center">Recipe Results</h1>
-    {% if recipes %}
-      <div class="accordion" id="recipeAccordion">
-        {% for recipe in recipes %}
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="heading{{ loop.index }}">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
-                <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="thumbnail" onerror="this.onerror=null; this.src='https://via.placeholder.com/100?text=No+Image';">
-                {{ recipe.title }}
-              </button>
-            </h2>
-            <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="heading{{ loop.index }}" data-bs-parent="#recipeAccordion">
-              <div class="accordion-body">
-                <h6>Nutrition:</h6>
-                <ul>
-                  {% for key, value in recipe.nutrition.items() %}
-                    {% if value %}<li>{{ key }}: {{ value }}</li>{% endif %}
-                  {% endfor %}
-                </ul>
-                <h6>Ingredients:</h6>
-                <ul>
-                  {% for ing in recipe.ingredients %}
-                    <li>{{ ing }}</li>
-                  {% endfor %}
-                </ul>
-                <h6>Instructions:</h6>
-                <ul>
-                  {% for step in recipe.instructions %}
-                    <li>{{ step }}.</li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
+    <h1>Recipe Results</h1>
+    {% if result.error %}
+        <p class="error-message">{{ result.error }}</p>
     {% else %}
-      <p class="text-center">No recipes found.</p>
+        {% for recipe in result.data %}
+            <details class="recipe-box">
+                <summary>
+                    <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="thumbnail">
+                    {{ recipe.title }}
+                    <span class="recipe-info">
+                        {{ recipe.source }} |
+                        {{ recipe.nutrition.calories if recipe.nutrition.calories != "Unknown" else "Calories N/A" }}
+                    </span>
+                </summary>
+                <div class="recipe-details">
+                    <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="full-image">
+                    <h3>Ingredients</h3>
+                    <ul>
+                        {% for ing in recipe.ingredients %}
+                            <li>{{ ing.name }}
+                                {% if ing.metricMeasurement %}
+                                    ({{ ing.metricMeasurement }})
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <h3>Instructions</h3>
+                    <ol>
+                        {% for step in recipe.instructions %}
+                            <li>{{ step }}</li>
+                        {% endfor %}
+                    </ol>
+                    <h3>Nutrition Information</h3>
+                    <table class="nutrition-table">
+                        <tr><th>Nutrient</th><th>Value</th></tr>
+                        <tr>
+                            <td>Calories</td>
+                            <td>{{ recipe.nutrition.calories if recipe.nutrition.calories != "Unknown" else "Not available" }}</td>
+                        </tr>
+                        <tr>
+                            <td>Protein</td>
+                            <td>{{ recipe.nutrition.protein if recipe.nutrition.protein != "Unknown" else "Not available" }}</td>
+                        </tr>
+                        <tr>
+                            <td>Carbs</td>
+                            <td>{{ recipe.nutrition.carbs if recipe.nutrition.carbs != "Unknown" else "Not available" }}</td>
+                        </tr>
+                        <tr>
+                            <td>Fat</td>
+                            <td>{{ recipe.nutrition.fat if recipe.nutrition.fat != "Unknown" else "Not available" }}</td>
+                        </tr>
+                    </table>
+                    <p><strong>Time Category:</strong> {{ recipe.timeCategory }}</p>
+                    <p><strong>Cultural Origin:</strong> {{ recipe.culturalOrigin }}</p>
+                </div>
+            </details>
+        {% endfor %}
     {% endif %}
-    <div class="text-center mt-4">
-      <a href="/" class="btn btn-custom">Back</a>
-    </div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
